@@ -1,0 +1,9 @@
+-r dist.txt
+
+isort
+flake8
+factory_boy
+pytest-django
+pytest-cov
+pytest-sugar
+pytest-watch
