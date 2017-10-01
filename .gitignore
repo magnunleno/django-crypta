@@ -1,6 +1,7 @@
 *.swap
 node_modules/
 migrations/
+.messages/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
