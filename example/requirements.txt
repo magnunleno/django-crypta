@@ -1,0 +1,4 @@
+-r ../requirements/dist.txt
+
+factory_boy
+django-extensions
