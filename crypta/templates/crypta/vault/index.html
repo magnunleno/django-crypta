@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}My Vaults{% endblock %}
+
+{% block content %}
+  <h2>My Vaults</h2>
+
+  <ul>
+    {% if object_list.exists %}
+    {% for object in object_list %}
+    <li>
+      <a {% if object.excluded %}style="color: red;"{% endif %}href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+      <br>
+      <div style="display:inline-block; vertical-align: middle;">
+        <a href="{% url 'vault:update' object.slug %}">[Edit]</a>
+        <a href="{% url 'membership:by-vault' object.slug %}">[Members]</a>
+        <a href="{% url 'invite:create' object.slug %}">[Invite]</a>
+        {% if object.excluded %}
+        <form action="{% url 'vault:restore' %}" style="display: inline" method="post">
+            {% csrf_token %}
+            <input name="pk" type="hidden" value="{{ object.id }}" />
+            <button type="submit">Restore</button>
+        </form>
+        {% else %}
+        <form action="{% url 'vault:delete' %}" style="display: inline" method="post">
+            {% csrf_token %}
+            <input name="pk" type="hidden" value="{{ object.id }}" />
+            <button type="submit">Exclude</button>
+        </form>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+    {% else %}
+    <p>Sorry, you currently don't have any vault. Please create one <a href="{% url 'vault:create' %}">here</a>.</p>
+    {% endif %}
+  </ul>
+
+  <hr />
+  <p>Create a new vault <a href="{% url 'vault:create' %}">here</a></p>
+{% endblock %}

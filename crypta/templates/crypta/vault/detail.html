@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Vault - {{ object.name }}{% endblock %}
+
+{% block content %}
+<h2>Vault - {{ object.name }} <small><a href="{% url 'vault:update' object.slug %}">[Edit]</a></small></h2>
+  
+
+  <div style="display: flex;">
+    <div style="width: 50%">
+      <h3>Secrets <small><a href="{% url 'secret:create' slug=object.slug %}">[New]</a></small></h3>
+      {% if object.secrets.count > 0 %}
+      <ul>
+        {% for secret in object.secrets.all %}
+        <li>
+          <a href="{% url 'secret:detail' pk=secret.pk %}">{{ secret.name }}</a>
+          <br>
+          [Edit]
+          [Exclude]
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>Sorry, this vault doesn't have any secret. Please create the first one <a href="{% url 'secret:create' slug=object.slug %}">here</a>.</p>
+      {% endif %}
+    </div>
+    <div style="width: 50%">
+      <h3>Members <small><a href="{% url 'membership:by-vault' slug=object.slug %}">[Show all]</a></small></h3>
+      <ul>
+        {% for membership in object.memberships.all %}
+        <li>
+          {{ membership.member.first_name }}
+          <small>
+            [ Role: {{ membership.get_role_display }} ]
+          </small>
+        </li>
+        {% endfor %}
+      </ul>
+      <hr />
+      <small>View all <a href="{% url 'invite:by-vault' slug=object.slug %}">invites</a> or send a new <a href="{% url 'invite:create' slug=object.slug %}">Invite</a>.</small>
+    </div>
+  </div>
+{% endblock %}

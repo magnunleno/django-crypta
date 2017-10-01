@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Vault{% endblock %}
+
+{% block content %}
+  <h2>Edit Vault</h2>
+
+	<form action="{% url 'vault:update' object.slug %}" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+	</form>
+{% endblock %}

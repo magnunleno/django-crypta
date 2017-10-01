@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}New Vault{% endblock %}
+
+{% block content %}
+  <h2>New Vault</h2>
+
+	<form action="{% url 'vault:create' %}" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+	</form>
+{% endblock %}
