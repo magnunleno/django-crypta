@@ -1,0 +1,9 @@
+We're sorry, but {{ user.first_name }} has demoted your membership.
+
+Your role in Vault '{{ membership.vault.name }}' has changed from '{{ old_role_display }}' to '{{ new_role_display}}'.
+
+Maybe you stepped in somebody toes...
+
+¯\_(ツ)_/¯
+
+Check the Vault here: http://{{ site.domain }}{{ membership.vault.get_absolute_url }}

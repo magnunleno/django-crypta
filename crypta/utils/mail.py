@@ -92,3 +92,16 @@ class VaultInviteAcceptedEmail(BaseEmail):
         return self.subject.format(
             self._kwargs.get('invitee_name', None)
         )
+
+
+class MembershipPromotionEmail(BaseEmail):
+    subject = _("Your membership has changed!")
+    txt_template = 'crypta/mail/membership_promotion.txt'
+    html_template = 'crypta/mail/membership_promotion.' +\
+        settings.TEMPLATE_EXTENSION
+
+
+class MembershipDemotionEmail(MembershipPromotionEmail):
+    txt_template = 'crypta/mail/membership_demotion.txt'
+    html_template = 'crypta/mail/membership_demotion.' +\
+        settings.TEMPLATE_EXTENSION

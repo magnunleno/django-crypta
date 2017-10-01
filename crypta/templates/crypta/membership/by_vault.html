@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Memberships from {{ vault.name }}{% endblock %}
+
+{% block content %}
+  <h2>Memberships from {{ vault.name }}</h2>
+
+  <ul>
+    {% if object_list.exists %}
+    {% for object in object_list %}
+    <li>
+      {{ object.member }} as {{ object.get_role_display }}
+      <br>
+      {% if object.member != request.user %}
+      <div style="display:inline-block; vertical-align: middle;">
+        <form action="{% url 'membership:delete' %}" style="display: inline" method="post">
+          {% csrf_token %}
+          <input name="pk" type="hidden" value="{{ object.pk }}" />
+          <button type="submit">Exclude</button>
+        </form>
+        <a href="{% url 'membership:update' pk=object.pk %}">[ Edit]</a>
+      </div>
+      {% endif %}
+    </li>
+    {% endfor %}
+    {% else %}
+    <p>Sorry, this vault currently doesn't have any membership.</p>
+    {% endif %}
+  </ul>
+
+  <hr />
+  <p>Create a new vault <a href="{% url 'vault:create' %}">here</a></p>
+{% endblock %}

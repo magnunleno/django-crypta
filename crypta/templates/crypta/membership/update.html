@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Updating Membership{% endblock %}
+
+{% block content %}
+  <h2>Updating Membership</h2>
+
+	<p><strong>Vault:</strong> {{ object.vault.name }}</p>
+	<p><strong>Member:</strong> {{ object.member.first_name }}</p>
+
+	<form action="{% url 'membership:update' pk=object.pk %}" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+	</form>
+{% endblock %}

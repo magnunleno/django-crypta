@@ -1,0 +1,7 @@
+Congratulations, {{ user.first_name }} granted you a membership promotion!
+
+Now your role in Vault '{{ membership.vault.name }}' has changed from '{{ old_role_display }}' to '{{ new_role_display}}'.
+
+But be careful, with great pow... Nevermind.
+
+Check your new rights here: http://{{ site.domain }}{{ membership.vault.get_absolute_url }}

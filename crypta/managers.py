@@ -85,3 +85,36 @@ class InviteManager(models.Manager):
         )
         email.send()
         return invite
+
+
+class MembershipManager(BaseManager):
+    _queryset_class = querysets.MembershipQuerySet
+
+    def from_vault_managed_by(self, user):  # pragma: no cover
+        return super().get_queryset().from_vault_managed_by(user)
+
+    @transaction.atomic
+    def create_ownership(self, owner, vault, password):
+        if vault.pub_key:  # pragma: no cover
+            raise Exception("This vault already has a public key!")
+
+        (priv_key, pub_key) = crypt.gen_keys(password)
+        vault.pub_key = pub_key
+        vault.save()
+
+        membership = super().create(
+            member=owner, vault=vault, role='owner', priv_key=priv_key
+        )
+        return membership
+
+    @transaction.atomic
+    def create_from_invite(self, invite, token, password):
+        priv_key = crypt.change_password(
+            invite.temporary_key, token, password
+        )
+        instance = super().create(
+            member=invite.invitee, vault=invite.vault, role=invite.role,
+            priv_key=priv_key,
+        )
+        invite.accept()
+        return instance

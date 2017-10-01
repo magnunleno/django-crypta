@@ -78,3 +78,49 @@ class AcceptInviteForm(mixins.PasswordConfirmFormMixin):
         raise ValidationError(
             _("Sorry, but this token is invalid!")
         )
+
+
+class UpdateMembershipForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        self.vault = kwargs.pop('vault', None)
+        self.user_membership = self.user.memberships.get(
+            vault=self.vault, member=self.user
+        )
+        super().__init__(*args, **kwargs)
+
+    def clean_role(self):
+        new_role = self.cleaned_data['role']
+
+        if self.user_membership.role == 'owner':
+            return new_role
+
+        if self.user_membership.role == 'member':  # pragma: no cover
+            raise ValidationError(_(
+                "Sorry, but Members can't promote/demote other users."
+            ))
+
+        # User role is Admin
+        if self.instance.role == 'owner':
+            raise ValidationError(_(
+                "Sorry, but only owners can update other owner's membership."
+            ))
+
+        if new_role == 'owner':
+            raise ValidationError(_(
+                "Sorry, but only owners can promote other members to owner."
+            ))
+
+        return new_role
+
+    def save(self, commit=True):
+        if 'role' not in self.changed_data:  # pragma: no cover
+            return self.instance
+
+        self.instance.change_role(self.initial['role'], self.user, commit)
+        return self.instance
+
+    class Meta:
+        model = models.Membership
+        localized_fields = ('__all__')
+        fields = ['role']
