@@ -1,9 +1,13 @@
 -r dist.txt
 
+tox
+mock
 isort
 flake8
 factory_boy
 pytest-django
 pytest-cov
+pytest-xdist
 pytest-sugar
 pytest-watch
+django-extensions
