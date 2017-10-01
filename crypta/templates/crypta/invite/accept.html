@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}You Received an Invitation{% endblock %}
+
+{% block content %}
+<h2>You Received an Invitation</h2>
+
+{% if invite.is_expired %}
+<p>Sorry, but this invitation expired on {{ invite.expires_on|date:"SHORT_DATE_FORMAT" }}.</p>
+{% elif invite.accepted %}
+<p>Sorry, but you've already accepted this invite on {{ invite.joined_on|date:"SHORT_DATE_FORMAT" }}.</p>
+{% else %}
+<p>You've been invited to join '{{ invite.vault.name }}'. To proceed please
+inform the token sent to you and retype your password.</p>
+
+<form action="" method="post" accept-charset="utf-8">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Accept</button>
+</form>
+{% endif %}
+
+{% endblock %}

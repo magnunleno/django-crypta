@@ -17,6 +17,7 @@
 # along with Django-Crypta. If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
+from django.utils import timezone
 
 
 class BaseQuerySet(models.QuerySet):
@@ -42,3 +43,25 @@ class VaultQuerySet(BaseQuerySet):
         return self.filter(
             membership__member=user, membership__excluded=False
         )
+
+
+class BaseManagedVaultQuerySet(BaseQuerySet):
+    def from_vault_managed_by(self, user):
+        return self.filter(
+            vault__membership__member=user,
+            vault__membership__role__in=('owner', 'admin'),
+        )
+
+
+class MembershipQuerySet(BaseManagedVaultQuerySet):
+    pass
+
+
+class InviteQuerySet(BaseManagedVaultQuerySet):
+    def pending(self):
+        return self.filter(accepted=False).filter(
+            expires_on__gte=timezone.now()
+        )
+
+    def not_accepted(self):
+        return self.filter(accepted=False)

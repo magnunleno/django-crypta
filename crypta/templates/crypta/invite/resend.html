@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Resending Invite{% endblock %}
+
+{% block content %}
+  <h2>Resending Invite</h2>
+
+	<form method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Resend</button>
+	</form>
+{% endblock %}

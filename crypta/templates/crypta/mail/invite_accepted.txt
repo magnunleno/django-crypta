@@ -1,0 +1,6 @@
+Hi there {{ inviter_name }}!
+
+We're here just to inform you that {{ invitee_name }} has just accepted your
+invite to '{{ vault_name }}' as {{ role }}.
+
+Remember, you can revoke this permission anytime here: http://{{ site.domain }}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Invites for {{ vault.name }}{% endblock %}
+
+{% block content %}
+<h2>Invites for {{ vault.name }}</h2>
+
+{% if object_list.exists %}
+<ul>
+  {% for invite in object_list %}
+  <li>
+    Invite for {{ invite.invitee }} (as {{ invite.get_role_display }}), sent by {{ invite.inviter }} at {{ invite.invited_on|date:"SHORT_DATE_FORMAT" }}
+      [
+      <strong>Status:</strong> {{invite.status }}
+      {% if not invite.accepted  and not invite.is_expired %}
+      | 
+      <strong>Expires on:</strong> {{ invite.days_to_expire }} days
+      {% endif %}
+      ]
+
+    {% if not invite.accepted %}
+    <br />
+    <div style="display:inline-block; vertical-align: middle;">
+      <form action="{% url 'invite:revoke' %}" style="display: inline" method="post">
+        {% csrf_token %}
+        <input name="pk" type="hidden" value="{{ invite.pk }}" />
+        <button type="submit">Revoke</button>
+      </form>
+      <form action="{% url 'invite:renew' %}" style="display: inline" method="post">
+        {% csrf_token %}
+        <input name="pk" type="hidden" value="{{ invite.pk }}" />
+        <button type="submit">Renew</button>
+      </form>
+      <a href="{% url 'invite:resend' pk=invite.pk %}">[Resend]</a>
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>This vault doesn't have any invite. Back to the <a href=" {{ vault.get_absolute_url }}">vault</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}New Vault Invite{% endblock %}
+
+{% block content %}
+<h2>New Invite for '{{ vault.name }}'</h2>
+
+	<form action="" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send Invitation</button>
+	</form>
+{% endblock %}

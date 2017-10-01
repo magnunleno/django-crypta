@@ -44,6 +44,37 @@ class UpdateVaultForm(mixins.SlugFormMixin, forms.ModelForm):
 class CreateVaultForm(mixins.PasswordConfirmFormMixin, UpdateVaultForm):
     '''
     Form creates a Vault. Similar to UpdateVaultForm, but it requires
-    a passowrd
-    '''
+    a passowrd '''
     pass
+
+
+class CreateInviteForm(mixins.PasswordConfirmFormMixin, forms.ModelForm):
+    ''' Form that creates a new invite. '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['invitee'].queryset = User.objects.exclude(pk=self.user.pk)
+
+    class Meta:
+        model = models.Invite
+        localized_fields = ('__all__')
+        fields = [
+            'invitee',
+            'role',
+        ]
+
+
+class AcceptInviteForm(mixins.PasswordConfirmFormMixin):
+    ''' Form that accepts a invite. '''
+    token = forms.CharField(label=_('Token'), max_length=100)
+
+    def __init__(self, *args, **kwargs):
+        self.invite = kwargs.pop('invite', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_token(self):
+        token = self.cleaned_data['token']
+        if crypt.test_private_key_password(self.invite.temporary_key, token):
+            return token
+        raise ValidationError(
+            _("Sorry, but this token is invalid!")
+        )

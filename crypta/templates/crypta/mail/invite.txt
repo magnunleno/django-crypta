@@ -1,0 +1,9 @@
+You've been invited to join '{{ vault_name }}'
+
+Hi there {{ invitee }}, you've been invited by {{ inviter }} to join the vault '{{ vault_name }}'.
+
+In order to join, please inform the following secure code:
+
+{{ token }}
+
+Join Vault here: http://{{ site.domain }}{% url 'invite:accept' pk=invite_pk %}

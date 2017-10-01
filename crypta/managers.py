@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Django-Crypta.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
+from django.db import models, transaction
 
 from crypta import querysets
-from crypta.utils import crypt
+from crypta.utils import crypt, tokens, mail
 
 
 class BaseManager(models.Manager):
@@ -44,3 +44,44 @@ class VaultManager(BaseManager):
 
     def with_member(self, user):  # pragma: no cover
         return super().get_queryset().with_member(user)
+
+
+class InviteManager(models.Manager):
+    _queryset_class = querysets.InviteQuerySet
+
+    def pending(self):  # pragma: no cover
+        return super().get_queryset().pending()
+
+    def not_accepted(self):  # pragma: no cover
+        return super().get_queryset().not_accepted()
+
+    def from_vault_managed_by(self, user):  # pragma: no cover
+        return super().get_queryset().from_vault_managed_by(user)
+
+    @transaction.atomic
+    def create(self, inviter, inviter_pass, invitee, role, vault, **kwargs):
+        token = tokens.random_token()
+        inviter_priv_key = vault.memberships.get(
+            member=inviter, excluded=False
+        ).priv_key
+
+        invite = super().create(
+            inviter=inviter, invitee=invitee, vault=vault, role=role,
+            temporary_key=crypt.change_password(
+                inviter_priv_key, inviter_pass, token
+            ), **kwargs
+        )
+
+        email = mail.VaultInviteEmail(
+            to=invitee.email,
+            context={
+                'role': role,
+                'token': token,
+                'invite_pk': invite.pk,
+                'vault_name': vault.name,
+                'inviter': inviter.first_name,
+                'invitee': invitee.first_name,
+            },
+        )
+        email.send()
+        return invite
