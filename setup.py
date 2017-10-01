@@ -19,6 +19,7 @@
 import io
 
 from setuptools import find_packages, setup
+
 from crypta.utils.setuptools import find_package_data, get_requirements
 
 version = __import__('crypta').__version__
