@@ -16,8 +16,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Django-Crypta.  If not, see <http://www.gnu.org/licenses/>.
 
+import django
+
 SECRET_KEY = 'awesome-secret'
 SITE_ID = 1
+USE_TZ = True
+USE_I18N = True
+USE_L10N = True
+TIME_ZONE = 'UTC'
 
 DATABASES = {
     'default': {
@@ -53,6 +59,9 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+if (django.VERSION[0] == 1 and django.VERSION[1] < 10):
+    MIDDLEWARE_CLASSES = MIDDLEWARE
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,3 +75,4 @@ INSTALLED_APPS = (
 
 # Dummy STATIC_ROOT
 ALLOWED_HOSTS = ['*']
+CRYPTA_EMAIL_FROM_ADDR = 'teste@teste.com'
