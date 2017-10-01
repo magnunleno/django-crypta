@@ -24,3 +24,5 @@ __version__ = '.'.join(map(str, VERSION))
 __author__ = 'Magnun Leno'
 __license__ = 'GNU LGPL v3'
 __copyright__ = 'Copyright 2017 Magnun Leno and contributors'
+
+default_app_config = 'crypta.apps.CryptaAppConfig'
