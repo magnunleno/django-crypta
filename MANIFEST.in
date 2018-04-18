@@ -1,0 +1,7 @@
+include AUTHORS
+include LICENSE
+include README.rst
+include ChangeLog.rst
+include Makefile
+recursive-include requirements *.txt
+recursive-include crypta *.html *.txt *.xml *.po *.mo
