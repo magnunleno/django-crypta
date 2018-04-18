@@ -16,24 +16,29 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Django-Crypta.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth import views as auth_views
-from django.views.generic.base import TemplateView
+try:  # pragma: no cover
+    from django.conf.urls import url
+except ImportError:  # pragma: no cover
+    from django.conf.urls import url
 
-try:
-    login = auth_views.LoginView.as_view()
-except AttributeError:
-    login = auth_views.login
-
-try:
-    from django.conf.urls import url, include
-except ImportError:
-    from django.conf.urls import url, include
+from crypta import views
 
 urlpatterns = [
-    url(r'^accounts/login/$', login, name='login'),
-    url(r'^accounts/logout/$',
-        auth_views.logout, {'next_page': '/'}, name='logout'),
-    url(r'^accounts/profile/$',
-        TemplateView.as_view(template_name='profile.html'), name="profile"),
-    url(r'^crypta/', include('crypta.urls')),
+    url(r'^vault/(?P<slug>[\w-]+)/create$',
+        views.SecretCreateView.as_view(),
+        name="create"
+        ),
+    url(r'^(?P<pk>[0-9a-f-]+)$',
+        views.SecretDetailView.as_view(),
+        name="detail"
+        ),
+    url(r'^secret/(?P<pk>[\w-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.SecretUpdateView.as_view(),
+        name="update"
+        ),
+    url(
+        r'^(?P<pk>[0-9a-f-]+)/delete$',
+        views.SecretDeleteView.as_view(),
+        name="delete"
+    ),
 ]

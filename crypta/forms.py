@@ -124,3 +124,60 @@ class UpdateMembershipForm(forms.ModelForm):
         model = models.Membership
         localized_fields = ('__all__')
         fields = ['role']
+
+
+class BaseSecretForm(forms.Form):
+    data = forms.CharField(widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        self.vault = kwargs.pop('vault', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_data(self):
+        data = self.cleaned_data['data']
+        if not SecretAdapter.validate(data):
+            raise ValidationError(_("Invalid secret format."))
+
+        encrypted_data = crypt.encrypt(self.vault.pub_key, data)
+        return encrypted_data
+
+    def save(self, commit=True):
+        if 'data' not in self.changed_data:  # pragma: no cover
+            return self.instance
+
+        if getattr(self.instance, 'vault', None) is None:
+            self.instance.vault = self.vault
+
+        self.instance.data = self.cleaned_data['data']
+
+        if commit:  # pragma: no cover
+            self.instance.save()
+
+        return self.instance
+
+
+class CreateSecretForm(BaseSecretForm, forms.ModelForm):
+    class Meta:
+        model = models.Secret
+        localized_fields = ('__all__')
+        fields = [
+            'name',
+        ]
+
+
+class UpdateSecretForm(BaseSecretForm, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        kwargs['vault'] = kwargs['instance'].vault
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = models.Secret
+        localized_fields = ('__all__')
+        fields = []
+
+
+class SecretPasswordForm(mixins.PasswordConfirmFormMixin, forms.ModelForm):
+    class Meta:
+        model = models.Secret
+        localized_fields = ('__all__')
+        fields = ['vault']

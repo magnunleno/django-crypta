@@ -14,9 +14,10 @@
         {% for secret in object.secrets.all %}
         <li>
           <a href="{% url 'secret:detail' pk=secret.pk %}">{{ secret.name }}</a>
-          <br>
-          [Edit]
-          [Exclude]
+          <form action="{% url 'secret:delete' pk=secret.pk %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Exclude</button>
+          </form>
         </li>
         {% endfor %}
       </ul>

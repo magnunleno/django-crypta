@@ -16,4 +16,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Django-Crypta.  If not, see <http://www.gnu.org/licenses/>.
 
-__all__ = ["setuptools", "models"]
+# from . import crypt
+# from . import models
+# from . import setuptools
+
+__all__ = ['crypt', 'models', 'setuptools', 'tokens', 'mail']

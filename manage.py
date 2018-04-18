@@ -18,10 +18,11 @@
 
 import os
 
+from django.core import management  # NOQA
+
 if 'DJANGO_SETTINGS_MODULE' not in os.environ:
     os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
 
-from django.core import management  # NOQA
 
 if __name__ == "__main__":
     management.execute_from_command_line()

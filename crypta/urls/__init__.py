@@ -16,10 +16,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Django-Crypta.  If not, see <http://www.gnu.org/licenses/>.
 
-from crypta.urls import secret, vault, invite
+try:  # pragma: no cover
+    from django.conf.urls import url, include
+except ImportError:  # pragma: no cover
+    from django.conf.urls import url, include
 
-urlpatterns = secret.urlpatterns +\
-    vault.urlpatterns +\
-    invite.urlpatterns
+urlpatterns = [
+    url(r'^vault/', include('crypta.urls.vault', namespace="vault")),
+    url(r'^invite/', include('crypta.urls.invite', namespace="invite")),
+    url(r'^secret/', include('crypta.urls.secret', namespace="secret")),
+    url(r'^membership/', include('crypta.urls.membership',
+                                 namespace="membership")),
+]
 
-__all__ = ["secret", "vault", "invite"]
+__all__ = ["secret", "vault", "invite", "membership"]
